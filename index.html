@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wald-Entdecker – Rundweg Lanz</title>
+    <style>
+        :root { --forstgruen: #154734; --weiss: #ffffff; --schwarz: #2d2a26; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--forstgruen); color: var(--schwarz); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { width: 100%; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 10px rgba(0,0,0,0.2); transition: background-color 0.4s ease; }
+        .header-content { max-width: 500px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+        #kat-label { color: white; margin: 0; font-size: 1rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .kat-icon { font-size: 1.2rem; background-color: rgba(255,255,255,0.95); padding: 6px 8px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; }
+        #station-number { color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: bold; }
+        .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 25px 15px; }
+        .intro { text-align: center; color: var(--weiss); margin-bottom: 30px; }
+        h1 { margin: 0; font-size: 2.2rem; color: var(--weiss); }
+        .card { background: var(--weiss); border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: var(--forstgruen); font-size: 1.1rem; margin: 0 0 10px 0; display: flex; align-items: center; text-transform: uppercase; }
+        .step-num { color: var(--weiss); width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 0.9rem; font-weight: bold; flex-shrink: 0; transition: background-color 0.4s ease; }
+        p { line-height: 1.6; font-size: 1.05rem; margin: 0; color: #333; }
+        footer { text-align: center; padding: 0 20px 5px 20px; margin-top: auto; }
+        footer p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+        .loading { color: white; text-align: center; padding: 40px; font-size: 1.2rem; }
+        .error { color: #ff6b6b; text-align: center; padding: 40px; font-size: 1.1rem; }
+        .empty-state { color: rgba(255,255,255,0.7); text-align: center; padding: 40px; font-style: italic; }
+        .schluessel-intro { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; color: white; font-size: 0.95rem; line-height: 1.5; }
+        .schluessel-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .schluessel-table th { background: var(--forstgruen); color: white; padding: 12px 10px; text-align: left; font-size: 0.85rem; text-transform: uppercase; }
+        .schluessel-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.95rem; vertical-align: top; }
+        .schluessel-table tr:hover { background: #f5f5f5; }
+        .schluessel-table .var-cell { font-weight: bold; color: var(--forstgruen); white-space: nowrap; width: 80px; }
+        .schluessel-table .merkmale-cell { line-height: 1.4; }
+        .schluessel-table .weiter-cell { font-weight: bold; white-space: nowrap; width: 100px; }
+        .schluessel-table .baum-name { color: #3E822C; }
+        .schluessel-table .weiter-link { color: #C36015; background: #f5f0e8; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<header id="category-header">
+    <div class="header-content">
+        <h1 id="kat-label"><span class="kat-icon" id="kat-icon">🐿️</span><span id="kat-text">Wald-Entdecker</span></h1>
+        <span id="station-number">Station --</span>
+    </div>
+</header>
+<div class="container">
+    <div class="intro"><h1 id="thema-label">Lade...</h1></div>
+    <div id="cards-container"><div class="loading">Daten werden geladen...</div></div>
+</div>
+<footer><p>&copy; 2026 Landesforstanstalt Mecklenburg-Vorpommern</p></footer>
+
+<script>
+function parseCSV(csvText) {
+    const lines = csvText.trim().split("\n");
+    if (lines.length < 2) return {};
+    const result = {};
+    for (let i = 1; i < lines.length; i++) {
+        const row = parseCSVLine(lines[i]);
+        if (row.length < 5) continue;
+        const id = String(row[0]).trim();
+        const kategorie = row[1] || "";
+        const icon = row[2] || "🐿️";
+        const thema = row[3] || "";
+        const farbe = row[4] || "#154734";
+        let bereiche = [];
+        let schluesselDaten = null;
+        if (row[5] && String(row[5]).trim() === "SCHLUESSEL" && row[6]) {
+            try {
+                const jsonStr = row[6].replace(/""/g, '"');
+                schluesselDaten = JSON.parse(jsonStr);
+            } catch (e) { console.error("Fehler beim Parsen des Bestimmungsschlüssels:", e); }
+        } else {
+            for (let j = 5; j < row.length - 1; j += 2) {
+                const titel = row[j];
+                const text = row[j + 1];
+                if (titel && String(titel).trim() && String(titel).trim() !== "?") {
+                    bereiche.push({ titel: String(titel).trim(), text: text ? String(text).trim() : "" });
+                }
+            }
+        }
+        result[id] = { kategorie: kategorie, icon: icon, thema: thema, farbe: farbe, bereiche: bereiche, schluessel: schluesselDaten };
+    }
+    return result;
+}
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') { current += '"'; i++; }
+            else { inQuotes = !inQuotes; }
+        } else if (char === "," && !inQuotes) {
+            result.push(current.trim());
+            current = "";
+        } else { current += char; }
+    }
+    result.push(current.trim());
+    return result;
+}
+
+function renderBestimmungsschluessel(container, schluesselDaten, farbe) {
+    const intro = document.createElement("div");
+    intro.className = "schluessel-intro";
+    intro.innerHTML = `<strong>So funktioniert der Bestimmungsschlüssel:</strong><br><br>Am Anfang steht das genaue Betrachten des zu bestimmenden Baumes. Achtet dabei auf das Aussehen der Blätter, deren Anordnung, die Früchte, Farben und Geruch u.v.m.<br><br>Dann beginnt Ihr bei <strong>Var. 1a</strong> und <strong>1b</strong>. Lest euch die beschriebenen Merkmale durch, entscheidet euch für eins und folgt dann dem rechts stehenden Pfad "weiter zu Var", wo Ihr das Ganze wiederholt, bis Ihr zuletzt an einem <strong>Baumnamen</strong> angelangt.<br><br>Falls das nicht der Fall sein sollte, findet Ihr zu Beginn jeder Var. in Klammern die Angabe, von welcher Var. aus Ihr dorthin gelangt seid, z.B. <em>10a (6b)</em> bedeutet, dass man von Var. 6b weiter zu 10 gewiesen wurde.`;
+    container.appendChild(intro);
+    const table = document.createElement("table");
+    table.className = "schluessel-table";
+    table.innerHTML = `<thead><tr><th>Var.</th><th>Zu betrachtende Merkmale</th><th>Weiter zu Var.</th></tr></thead>`;
+    const tbody = document.createElement("tbody");
+    schluesselDaten.forEach(item => {
+        const isBaum = !/^\d/.test(item.weiter);
+        const weiterContent = isBaum ? `<span class="baum-name">${item.weiter}</span>` : `<span class="weiter-link">Var. ${item.weiter}</span>`;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td class="var-cell">${item.var}</td><td class="merkmale-cell">${item.merkmale}</td><td class="weiter-cell">${weiterContent}</td>`;
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
+function renderNormaleStation(s, container, farbe) {
+    s.bereiche.forEach((bereich, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const stepNum = document.createElement("div");
+        stepNum.className = "step-num";
+        stepNum.style.backgroundColor = farbe;
+        stepNum.textContent = index + 1;
+        const title = document.createElement("h2");
+        title.appendChild(stepNum);
+        title.appendChild(document.createTextNode(bereich.titel));
+        const text = document.createElement("p");
+        text.textContent = bereich.text;
+        card.appendChild(title);
+        card.appendChild(text);
+        container.appendChild(card);
+    });
+}
+
+function renderStation(stationsKatalog) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stationID = urlParams.get("id") || "1";
+    const s = stationsKatalog[stationID];
+    if (s) {
+        const farbe = s.farbe || "#154734";
+        document.getElementById("category-header").style.backgroundColor = farbe;
+        document.getElementById("kat-icon").textContent = s.icon;
+        document.getElementById("kat-text").textContent = s.kategorie;
+        document.getElementById("thema-label").textContent = s.thema;
+        document.getElementById("station-number").textContent = "Station " + stationID.padStart(2, "0");
+        const container = document.getElementById("cards-container");
+        container.innerHTML = "";
+        if (s.schluessel) {
+            renderBestimmungsschluessel(container, s.schluessel, farbe);
+        } else if (s.bereiche.length === 0) {
+            container.innerHTML = '<div class="empty-state">Für diese Station sind noch keine Inhalte vorhanden.</div>';
+        } else {
+            renderNormaleStation(s, container, farbe);
+        }
+    } else {
+        document.getElementById("thema-label").textContent = "Station nicht gefunden";
+        document.getElementById("cards-container").innerHTML = '<div class="error">Station "' + stationID + '" wurde nicht gefunden.</div>';
+    }
+}
+
+async function loadData() {
+    try {
+        const response = await fetch("daten_rundweg_lanz.csv");
+        if (!response.ok) { throw new Error("CSV-Datei konnte nicht geladen werden (Status: " + response.status + ")"); }
+        const csvText = await response.text();
+        const stationsKatalog = parseCSV(csvText);
+        if (Object.keys(stationsKatalog).length === 0) { throw new Error("CSV-Datei enthält keine gültigen Daten"); }
+        renderStation(stationsKatalog);
+    } catch (error) {
+        console.error("Fehler beim Laden der Daten:", error);
+        document.getElementById("thema-label").textContent = "Fehler";
+        document.getElementById("cards-container").innerHTML = '<div class="error">' + error.message + '<br><br>Stelle sicher, dass die Datei "daten_rundweg_lanz.csv" im gleichen Ordner liegt.</div>';
+    }
+}
+
+window.addEventListener("load", loadData);
+</script>
+</body>
+</html>
