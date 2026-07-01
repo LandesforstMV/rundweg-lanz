@@ -188,14 +188,14 @@
 </footer>
 
 <script>
-    // RFC 4180 konformer CSV-Zeilen-Parser (erkennt Kommas in Anführungszeichen)
+    // RFC 4180 konformer CSV-Zeilen-Parser
     function parseCSVLine(text) {
         let p = '', r = [];
         let q = false;
         for (let i = 0; i < text.length; i++) {
             let c = text[i];
             if (c === '"') {
-                if (q && text[i+1] === '"') { p += '"'; i++; } // Doppelte Anführungszeichen escapen
+                if (q && text[i+1] === '"') { p += '"'; i++; }
                 else { q = !q; }
             }
             else if (c === ',' && !q) { r.push(p.trim()); p = ''; }
@@ -226,26 +226,24 @@
 
             if (!stationID) continue;
 
-            // Fehlerkorrektur für verschobene Farbspalten in der CSV
-            let finaleFarbe = row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : "#154734";
-            let finalesIcon = row["Icon"] || "🐿️";
-
-            // Falls der Farbcode fälschlicherweise in der Icon-Spalte gelandet ist
-            if (finalesIcon.startsWith('#')) {
-                finaleFarbe = finalesIcon; 
-                finalesIcon = "🐿️";        
-            }
+            // ANPASSUNG AN DIE VERSCHOBENEN SPALTEN DEINER CSV:
+            // In Spalte 'Icon' steht die echte Farbe (z.B. #91ae2d)
+            // In Spalte 'Kategorie' steht das echte Icon (z.B. 🐿️)
+            // In Spalte 'Thema' steht die echte Kategorie/Thema (z.B. Bestimmungsschlüssel)
+            let finaleFarbe = row["Icon"] && row["Icon"].startsWith('#') ? row["Icon"] : "#154734";
+            let finalesIcon = row["Kategorie"] && !row["Kategorie"].startsWith('#') ? row["Kategorie"] : "🐿️";
+            let finalesThema = row["Thema"] || "Information";
 
             const bereiche = [];
-            // Iteriert durch die Spalten Paare Titel_1/Text_1 bis Titel_9/Text_9
+            // Iteriert durch die Spalten-Paare Titel_1/Text_1 bis Titel_9/Text_9
             for (let j = 1; j <= 9; j++) {
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
                 
-                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
+                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN" && row[tKey] !== "undefined" && row[txtKey] !== "undefined") {
                     let textValue = row[txtKey];
 
-                    // Spezialfall: Erkennung und Formatierung von JSON-Bestimmungsschlüsseln
+                    // Erkennung und saubere Formatierung von JSON-Bestimmungsschlüsseln
                     if (textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
@@ -253,7 +251,9 @@
                             
                             jsonArray.forEach(item => {
                                 bereiche.push({
+                                    // Setzt die Variante (z.B. "Auswahl 1a") als Überschrift
                                     titel: item.var ? `Auswahl ${item.var}` : row[tKey],
+                                    // Schreibt den langen Merkmalstext sauber in den Fließtext
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`
                                 });
                             });
@@ -263,7 +263,7 @@
                         }
                     }
 
-                    // Standard-Inhaltsblöcke
+                    // Standard-Inhaltsblöcke (z.B. Forstliche Begriffe)
                     bereiche.push({
                         titel: row[tKey],
                         text: textValue
@@ -272,9 +272,9 @@
             }
 
             katalog[stationID] = {
-                kategorie: row["Kategorie"] || "Rundweg",
+                kategorie: "Rundweg",
                 icon: finalesIcon,
-                thema: row["Thema"] || "Information",
+                thema: finalesThema,
                 farbe: finaleFarbe,
                 bereiche: bereiche
             };
@@ -284,7 +284,6 @@
 
     async function renderStation() {
         const urlParams = new URLSearchParams(window.location.search);
-        // Falls kein Parameter übergeben wurde, wird standardmäßig Station 2 geladen
         const stationID = urlParams.get('id') || "2"; 
 
         try {
