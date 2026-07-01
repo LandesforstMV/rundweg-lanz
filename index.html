@@ -254,6 +254,7 @@
 
                             jsonArray.forEach(item => {
                                 bereiche.push({
+                                    // Die Frage (var) kommt in h2, die Erklärung in p
                                     titel: item.var ? `Auswahl ${item.var}` : row[tKey],
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`,
                                     isKey: true
@@ -266,6 +267,7 @@
                     }
 
                     bereiche.push({
+                        // Titel = Frage (h2), Text = Erklärung (p)
                         titel: row[tKey],
                         text: textValue,
                         isKey: false
@@ -318,10 +320,12 @@
                     stepNum.style.backgroundColor = farbe;
                     stepNum.textContent = index + 1;
 
+                    // h2 = Titel/Frage (oben)
                     const title = document.createElement('h2');
                     title.appendChild(stepNum);
                     title.appendChild(document.createTextNode(bereich.titel));
 
+                    // p = Text/Erklärung (unten)
                     const text = document.createElement('p');
 
                     // Bestimmungsschlüssel: spezielle Darstellung
@@ -335,6 +339,7 @@
                         text.textContent = bereich.text;
                     }
 
+                    // Reihenfolge: h2 (Titel/Frage) zuerst, dann p (Text/Erklärung)
                     card.appendChild(title);
                     card.appendChild(text);
                     container.appendChild(card);
