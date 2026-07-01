@@ -1,185 +1,12 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wald-Entdecker</title>
-    <style>
-        :root {
-            --forstgruen: #154734;      
-            --weiss: #ffffff;
-            --schwarz: #2d2a26;
-            --grau: #f4f4f4;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: #11382a;
-            color: var(--schwarz);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        header {
-            width: 100%;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            transition: background-color 0.4s ease;
-            background-color: var(--forstgruen);
-        }
-
-        .header-content {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--weiss);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .icon-circle {
-            background-color: rgba(255,255,255,0.2);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .header-titles h1 {
-            margin: 0;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.9;
-        }
-
-        .header-titles p {
-            margin: 2px 0 0 0;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .station-badge {
-            background-color: rgba(0,0,0,0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        main {
-            flex: 1;
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 25px 20px;
-        }
-
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background-color: var(--weiss);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            margin-bottom: 12px;
-            font-size: 20px;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .step-num {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            color: var(--weiss);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .card p {
-            margin: 0;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #4a4a4a;
-            white-space: pre-line;
-        }
-
-        .error-msg {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-
-<header id="category-header">
-    <div class="header-content">
-        <div class="header-left">
-            <div class="icon-circle" id="kat-icon">🌲</div>
-            <div class="header-titles">
-                <h1 id="kat-text">Wald-Entdecker</h1>
-                <p id="thema-label">Lade Station...</p>
-            </div>
-        </div>
-        <div class="station-badge" id="station-number">Station --</div>
-    </div>
-</header>
-
-<main>
-    <div class="cards-container" id="cards-container">
-        <!-- Dynamischer Inhalt wird hier eingefügt -->
-    </div>
-</main>
-
 <script>
-    // RFC 4180 konformer CSV-Zeilen-Parser (berücksichtigt maskierte Kommas und Anführungszeichen)
+    // RFC 4180 konformer CSV-Zeilen-Parser
     function parseCSVLine(text) {
         let p = '', r = [];
         let q = false;
         for (let i = 0; i < text.length; i++) {
             let c = text[i];
             if (c === '"') {
-                if (q && text[i+1] === '"') { p += '"'; i++; } // Doppelte Anführungszeichen escapen
+                if (q && text[i+1] === '"') { p += '"'; i++; }
                 else { q = !q; }
             }
             else if (c === ',' && !q) { r.push(p.trim()); p = ''; }
@@ -210,8 +37,16 @@
 
             if (!stationID) continue;
 
+            // KORREKTUR: Falls die Spalten in der CSV vertauscht sind und im Icon ein Farbcode steht
+            let finaleFarbe = row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : "#154734";
+            let finalesIcon = row["Icon"] || "🐿️";
+
+            if (finalesIcon.startsWith('#')) {
+                finaleFarbe = finalesIcon; // Nimm den Farbcode aus der Icon-Spalte
+                finalesIcon = "🐿️";        // Setze ein Standard-Icon, da keins da ist
+            }
+
             const bereiche = [];
-            // Dynamisch alle Titel_1/Text_1 bis Titel_9/Text_9 durchgehen
             for (let j = 1; j <= 9; j++) {
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
@@ -219,7 +54,6 @@
                 if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
                     let textValue = row[txtKey];
 
-                    // KORREKTUR für das JSON-Array (z.B. beim Bestimmungsschlüssel)
                     if (textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
@@ -231,13 +65,12 @@
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`
                                 });
                             });
-                            continue; // Direkt zum nächsten Bereich springen
+                            continue; 
                         } catch (e) {
                             console.warn("JSON-Parsing fehlgeschlagen bei Station " + stationID, e);
                         }
                     }
 
-                    // Normale Stationen (Forstliche Begriffe etc.)
                     bereiche.push({
                         titel: row[tKey],
                         text: textValue
@@ -247,9 +80,9 @@
 
             katalog[stationID] = {
                 kategorie: row["Kategorie"] || "Rundweg",
-                icon: row["Icon"] || "🐿️",
+                icon: finalesIcon,
                 thema: row["Thema"] || "Information",
-                farbe: row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : "#154734",
+                farbe: finaleFarbe,
                 bereiche: bereiche
             };
         }
@@ -258,11 +91,9 @@
 
     async function renderStation() {
         const urlParams = new URLSearchParams(window.location.search);
-        // Standardmäßig Station 2 aufrufen, wenn kein ?id=X übergeben wurde
         const stationID = urlParams.get('id') || "2"; 
 
         try {
-            // Holt die CSV-Datei aus dem gleichen Verzeichnis
             const response = await fetch('daten_rundweg_lanz.csv');
             if (!response.ok) throw new Error("Die Datei 'daten_rundweg_lanz.csv' konnte nicht geladen werden.");
             
@@ -273,14 +104,13 @@
             if (s) {
                 const farbe = s.farbe;
 
-                // Header stylen & Inhalte setzen
+                // Setzt die korrekte Hintergrundfarbe für den Header
                 document.getElementById('category-header').style.backgroundColor = farbe;
                 document.getElementById('kat-icon').textContent = s.icon;
                 document.getElementById('kat-text').textContent = s.kategorie;
                 document.getElementById('thema-label').textContent = s.thema;
                 document.getElementById('station-number').textContent = "Station " + stationID.padStart(2, '0');
 
-                // Kacheln/Cards erzeugen
                 const container = document.getElementById('cards-container');
                 container.innerHTML = "";
 
@@ -290,6 +120,7 @@
                     
                     const stepNum = document.createElement('div');
                     stepNum.className = 'step-num';
+                    // Setzt die korrekte Hintergrundfarbe für die Nummerierungen
                     stepNum.style.backgroundColor = farbe;
                     stepNum.textContent = index + 1;
                     
@@ -311,12 +142,9 @@
         } catch (error) {
             console.error(error);
             document.getElementById('thema-label').textContent = "Fehler";
-            document.getElementById('cards-container').innerHTML = `<div class="error-msg">Fehler beim Laden der Daten: ${error.message}<br><small>Hinweis: Lokale CSV-Dateien blockieren Browser oft per CORS (Fetch), starte einen lokalen Server (z.B. Live Server in VS Code).</small></div>`;
+            document.getElementById('cards-container').innerHTML = `<div class="error-msg">Fehler beim Laden der Daten: ${error.message}</div>`;
         }
     }
 
     window.addEventListener('load', renderStation);
 </script>
-
-</body>
-</html>
