@@ -241,7 +241,23 @@
                 const txtKey = `Text_${j}`;
                 
                 if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN" && row[tKey] !== "undefined" && row[txtKey] !== "undefined") {
-                    let textValue = row[txtKey];
+                    let titleValue = (row[tKey] || "").toString().trim();
+                    let textValue = (row[txtKey] || "").toString().trim();
+
+                    // HEURISTIK: Wenn die Spalten vertauscht sein könnten, tauschen.
+                    // Kriterien (konservativ):
+                    // - Wenn der Titel wie langer Fließtext aussieht (sehr lang, Satzzeichen oder Zeilenumbrüche)
+                    //   und der Text dagegen kurz ist, dann tauschen.
+                    const titleLooksLikeLongText = titleValue.length > 80 || /[.!?]\s/.test(titleValue) || titleValue.includes('\n');
+                    const textLooksShort = textValue.length < 80 && !textValue.includes('\n');
+
+                    if (titleLooksLikeLongText && textLooksShort) {
+                        // Tausche
+                        const tmp = titleValue;
+                        titleValue = textValue;
+                        textValue = tmp;
+                        console.info(`Tausch Titel/Text bei Station ${stationID}, Felder ${tKey}/${txtKey}`);
+                    }
 
                     // Erkennung und saubere Formatierung von JSON-Bestimmungsschlüsseln
                     if (textValue.trim().startsWith('[')) {
@@ -252,7 +268,7 @@
                             jsonArray.forEach(item => {
                                 bereiche.push({
                                     // Setzt die Variante (z.B. "Auswahl 1a") als Überschrift
-                                    titel: item.var ? `Auswahl ${item.var}` : row[tKey],
+                                    titel: item.var ? `Auswahl ${item.var}` : titleValue,
                                     // Schreibt den langen Merkmalstext sauber in den Fließtext
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`
                                 });
@@ -265,7 +281,7 @@
 
                     // Standard-Inhaltsblöcke (z.B. Forstliche Begriffe)
                     bereiche.push({
-                        titel: row[tKey],
+                        titel: titleValue,
                         text: textValue
                     });
                 }
