@@ -245,17 +245,22 @@
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
                 
-                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
-                    let textValue = row[txtKey];
-
-                    if (textValue.trim().startsWith('[')) {
+                // In der CSV sind Titel und Text vertauscht:
+                // Titel_1 = lange Erklärung, Text_1 = kurze Frage
+                // Wir tauschen sie hier um:
+                let h2Text = row[txtKey];  // Frage/Aufforderung → h2
+                let pText = row[tKey];     // Erklärung → p
+                
+                if (h2Text && pText && h2Text !== "NaN" && pText !== "NaN") {
+                    
+                    if (pText.trim().startsWith('[')) {
                         try {
-                            const cleanJson = textValue.replace(/""/g, '"');
+                            const cleanJson = pText.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
                             
                             jsonArray.forEach(item => {
                                 bereiche.push({
-                                    titel: item.var ? `Auswahl ${item.var}` : row[tKey],
+                                    titel: item.var ? `Auswahl ${item.var}` : h2Text,
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`,
                                     isKey: true
                                 });
@@ -267,8 +272,8 @@
                     }
 
                     bereiche.push({
-                        titel: row[tKey],
-                        text: textValue,
+                        titel: h2Text,   // Frage → h2
+                        text: pText,     // Erklärung → p
                         isKey: false
                     });
                 }
