@@ -178,7 +178,7 @@
 
 <div class="container">
     <div class="intro">
-        <h1 id="thema-label">Lade...</h1>
+        <h1 id="thema-label">Rundweg Lanz</h1>
     </div>
 
     <div id="cards-container">
@@ -245,9 +245,6 @@
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
                 
-                // In der CSV sind Titel und Text vertauscht:
-                // Titel_1 = lange Erklärung, Text_1 = kurze Frage
-                // Wir tauschen sie hier um:
                 let h2Text = row[txtKey];  // Frage/Aufforderung → h2
                 let pText = row[tKey];     // Erklärung → p
                 
@@ -272,8 +269,8 @@
                     }
 
                     bereiche.push({
-                        titel: h2Text,   // Frage → h2
-                        text: pText,     // Erklärung → p
+                        titel: h2Text,
+                        text: pText,
                         isKey: false
                     });
                 }
@@ -308,6 +305,7 @@
                 document.getElementById('category-header').style.backgroundColor = farbe;
                 document.getElementById('kat-icon').textContent = s.icon;
                 document.getElementById('kat-text').textContent = s.kategorie;
+                // Thema in h1 anzeigen
                 document.getElementById('thema-label').textContent = s.thema;
                 document.getElementById('station-number').textContent = "Station " + stationID.padStart(2, '0');
 
