@@ -122,7 +122,6 @@
 
         p { line-height: 1.6; font-size: 1.05rem; margin: 0; color: #333; }
 
-        /* Spezial-Styles für Bestimmungsschlüssel */
         .key-entry {
             display: flex;
             gap: 12px;
@@ -164,7 +163,6 @@
             color: rgba(255,255,255,0.6);
         }
     </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -192,7 +190,8 @@
 </footer>
 
 <script>
-    // RFC 4180 konformer CSV-Zeilen-Parser
+    const DEFAULT_FARBE = "#91ae2d";
+
     function parseCSVLine(text) {
         let p = '', r = [];
         let q = false;
@@ -209,7 +208,6 @@
         return r;
     }
 
-    // Wandelt den CSV-Rohtext in ein strukturiertes Objekt um
     function csvToKatalog(csvText) {
         const lines = csvText.replace(/\r\n/g, '\n').split('\n');
         if (lines.length < 2) return {};
@@ -219,7 +217,7 @@
 
         for (let i = 1; i < lines.length; i++) {
             if (!lines[i].trim()) continue;
-
+            
             const values = parseCSVLine(lines[i]);
             const row = {};
             headers.forEach((h, idx) => { row[h] = values[idx] || ""; });
@@ -230,20 +228,23 @@
 
             if (!stationID) continue;
 
-            // KORREKTUR: Falls die Spalten in der CSV vertauscht sind und im Icon ein Farbcode steht
-            let finaleFarbe = row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : "#154734";
+            let finaleFarbe = row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : DEFAULT_FARBE;
             let finalesIcon = row["Icon"] || "🐿️";
 
             if (finalesIcon.startsWith('#')) {
-                finaleFarbe = finalesIcon; // Nimm den Farbcode aus der Icon-Spalte
-                finalesIcon = "🐿️";        // Setze ein Standard-Icon, da keins da ist
+                finaleFarbe = finalesIcon;
+                finalesIcon = "🐿️";
+            }
+
+            if (!finaleFarbe.startsWith('#')) {
+                finaleFarbe = DEFAULT_FARBE;
             }
 
             const bereiche = [];
             for (let j = 1; j <= 9; j++) {
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
-
+                
                 if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
                     let textValue = row[txtKey];
 
@@ -251,10 +252,9 @@
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
-
+                            
                             jsonArray.forEach(item => {
                                 bereiche.push({
-                                    // Die Frage (var) kommt in h2, die Erklärung in p
                                     titel: item.var ? `Auswahl ${item.var}` : row[tKey],
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`,
                                     isKey: true
@@ -267,7 +267,6 @@
                     }
 
                     bereiche.push({
-                        // Titel = Frage (h2), Text = Erklärung (p)
                         titel: row[tKey],
                         text: textValue,
                         isKey: false
@@ -293,7 +292,7 @@
         try {
             const response = await fetch('daten_rundweg_lanz.csv');
             if (!response.ok) throw new Error("Die Datei 'daten_rundweg_lanz.csv' konnte nicht geladen werden.");
-
+            
             const csvText = await response.text();
             const stationsKatalog = csvToKatalog(csvText);
             const s = stationsKatalog[stationID];
@@ -301,7 +300,6 @@
             if (s) {
                 const farbe = s.farbe;
 
-                // Setzt die korrekte Hintergrundfarbe für den Header
                 document.getElementById('category-header').style.backgroundColor = farbe;
                 document.getElementById('kat-icon').textContent = s.icon;
                 document.getElementById('kat-text').textContent = s.kategorie;
@@ -314,21 +312,18 @@
                 s.bereiche.forEach((bereich, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-
+                    
                     const stepNum = document.createElement('div');
                     stepNum.className = 'step-num';
                     stepNum.style.backgroundColor = farbe;
                     stepNum.textContent = index + 1;
-
-                    // h2 = Titel/Frage (oben)
+                    
                     const title = document.createElement('h2');
                     title.appendChild(stepNum);
                     title.appendChild(document.createTextNode(bereich.titel));
-
-                    // p = Text/Erklärung (unten)
+                    
                     const text = document.createElement('p');
-
-                    // Bestimmungsschlüssel: spezielle Darstellung
+                    
                     if (bereich.isKey) {
                         const parts = bereich.text.split('\n\n➜ Weiter zu: ');
                         text.innerHTML = `<div class="key-entry">
@@ -338,8 +333,7 @@
                     } else {
                         text.textContent = bereich.text;
                     }
-
-                    // Reihenfolge: h2 (Titel/Frage) zuerst, dann p (Text/Erklärung)
+                    
                     card.appendChild(title);
                     card.appendChild(text);
                     container.appendChild(card);
