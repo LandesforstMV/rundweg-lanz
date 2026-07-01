@@ -167,7 +167,8 @@
 
 <main>
     <div class="cards-container" id="cards-container">
-        </div>
+        <!-- Dynamischer Inhalt wird hier eingefügt -->
+    </div>
 </main>
 
 <script>
@@ -190,7 +191,6 @@
 
     // Wandelt den CSV-Rohtext in ein strukturiertes Objekt um
     function csvToKatalog(csvText) {
-        // Zeilenumbrüche vereinheitlichen und splitten
         const lines = csvText.replace(/\r\n/g, '\n').split('\n');
         if (lines.length < 2) return {};
 
@@ -204,7 +204,6 @@
             const row = {};
             headers.forEach((h, idx) => { row[h] = values[idx] || ""; });
 
-            // ID ermitteln: Falls im Feld z.B. "Rundweg Lanz 2" steht, extrahieren wir die "2"
             let rawID = row["ID"] || "";
             const idMatch = rawID.match(/\d+/);
             const stationID = idMatch ? idMatch[0] : rawID.trim();
@@ -220,17 +219,16 @@
                 if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
                     let textValue = row[txtKey];
 
-                    // Sonderfall: Bestimmungsschlüssel mit JSON-Array-Inhalt erkennen
+                    // KORREKTUR für das JSON-Array (z.B. beim Bestimmungsschlüssel)
                     if (textValue.trim().startsWith('[')) {
                         try {
-                            // Ersetze eventuell falsch maskierte Zeichen
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
                             
                             jsonArray.forEach(item => {
                                 bereiche.push({
                                     titel: item.var ? `Auswahl ${item.var}` : row[tKey],
-                                    text: `• Merkmal: ${item.merkmale}\n➜ Weiter zu: ${item.weiter}`
+                                    text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`
                                 });
                             });
                             continue; // Direkt zum nächsten Bereich springen
@@ -239,7 +237,7 @@
                         }
                     }
 
-                    // Normaler Text-Inhalt
+                    // Normale Stationen (Forstliche Begriffe etc.)
                     bereiche.push({
                         titel: row[tKey],
                         text: textValue
