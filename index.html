@@ -3,187 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wald-Entdecker – Rundweg Lanz</title>
+    <title>Wald-Entdecker</title>
     <style>
-        :root { --forstgruen: #154734; --weiss: #ffffff; --schwarz: #2d2a26; }
+        :root {
+            --forstgruen: #154734;      
+            --weiss: #ffffff;
+            --schwarz: #2d2a26;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--forstgruen); color: var(--schwarz); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        header { width: 100%; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 10px rgba(0,0,0,0.2); transition: background-color 0.4s ease; background-color: var(--forstgruen); }
-        .header-content { max-width: 500px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
-        #kat-label { color: white; margin: 0; font-size: 1rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-        .kat-icon { font-size: 1.2rem; background-color: rgba(255,255,255,0.95); padding: 6px 8px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; }
-        #station-number { color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: bold; }
-        .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 25px 15px; }
-        .intro { text-align: center; color: var(--weiss); margin-bottom: 30px; }
-        h1 { margin: 0; font-size: 2.2rem; color: var(--weiss); }
-        .card { background: var(--weiss); border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: var(--forstgruen); font-size: 1.1rem; margin: 0 0 10px 0; display: flex; align-items: center; text-transform: uppercase; }
-        .step-num { color: var(--weiss); width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 0.9rem; font-weight: bold; flex-shrink: 0; transition: background-color 0.4s ease; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--forstgruen);
+            color: var(--schwarz);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: background-color 0.4s ease;
+        }
+
+        .header-content {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #kat-label {
+            color: white;
+            margin: 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kat-icon {
+            font-size: 1.2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+        }
+
+        #station-number {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 25px 15px;
+        }
+
+        .intro {
+            text-align: center;
+            color: var(--weiss);
+            margin-bottom: 30px;
+        }
+
+        h1 { margin:0; font-size: 2.2rem; color: var(--weiss); }
+
+        .card {
+            background: var(--weiss);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--forstgruen);
+            font-size: 1.1rem;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .step-num {
+            color: var(--weiss);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            transition: background-color 0.4s ease;
+        }
+
         p { line-height: 1.6; font-size: 1.05rem; margin: 0; color: #333; }
-        footer { text-align: center; padding: 0 20px 5px 20px; margin-top: auto; }
-        footer p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
-        .loading { color: white; text-align: center; padding: 40px; font-size: 1.2rem; }
-        .error { color: #ff6b6b; text-align: center; padding: 40px; font-size: 1.1rem; }
-        .empty-state { color: rgba(255,255,255,0.7); text-align: center; padding: 40px; font-style: italic; }
-        .schluessel-intro { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; color: white; font-size: 0.95rem; line-height: 1.5; }
-        .schluessel-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .schluessel-table th { background: var(--forstgruen); color: white; padding: 12px 10px; text-align: left; font-size: 0.85rem; text-transform: uppercase; }
-        .schluessel-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.95rem; vertical-align: top; }
-        .schluessel-table tr:hover { background: #f5f5f5; }
-        .schluessel-table .var-cell { font-weight: bold; color: var(--forstgruen); white-space: nowrap; width: 80px; }
-        .schluessel-table .merkmale-cell { line-height: 1.4; }
-        .schluessel-table .weiter-cell { font-weight: bold; white-space: nowrap; width: 100px; }
-        .schluessel-table .baum-name { color: #3E822C; }
-        .schluessel-table .weiter-link { color: #C36015; background: #f5f0e8; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
+
+        footer {
+            text-align: center;
+            padding:0 20px 5px 20px;
+            margin-top: auto;
+        }
+
+        footer p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+        }
     </style>
 </head>
 <body>
+
 <header id="category-header">
     <div class="header-content">
-        <h1 id="kat-label"><span class="kat-icon" id="kat-icon">🐿️</span><span id="kat-text">Wald-Entdecker</span></h1>
+        <h1 id="kat-label">
+            <span class="kat-icon" id="kat-icon">🌲</span>
+            <span id="kat-text">Wald-Entdecker</span>
+        </h1>
         <span id="station-number">Station --</span>
     </div>
 </header>
+
 <div class="container">
-    <div class="intro"><h1 id="thema-label">Lade...</h1></div>
-    <div id="cards-container"><div class="loading">Daten werden geladen...</div></div>
+    <div class="intro">
+        <h1 id="thema-label">Lade...</h1>
+    </div>
+
+    <div id="cards-container">
+    </div>
 </div>
-<footer><p>&copy; 2026 Landesforstanstalt Mecklenburg-Vorpommern</p></footer>
+
+<footer>
+    <p>&copy; 2026 Landesforstanstalt Mecklenburg-Vorpommern</p>
+</footer>
 
 <script>
-function parseCSV(csvText) {
-    const lines = csvText.trim().split("\n");
-    if (lines.length < 2) return {};
-    const result = {};
-    for (let i = 1; i < lines.length; i++) {
-        const row = parseCSVLine(lines[i]);
-        if (row.length < 5) continue;
-        const id = String(row[0]).trim();
-        const kategorie = row[1] || "";
-        const icon = row[2] || "🐿️";
-        const thema = row[3] || "";
-        const farbe = row[4] || "#154734";
-        let bereiche = [];
-        let schluesselDaten = null;
-        if (row[5] && String(row[5]).trim() === "SCHLUESSEL" && row[6]) {
-            try {
-                const jsonStr = row[6].replace(/""/g, '"');
-                schluesselDaten = JSON.parse(jsonStr);
-            } catch (e) { console.error("Fehler beim Parsen des Bestimmungsschlüssels:", e); }
+    
+    const stationsKatalog = {
+        "1": { kategorie: "Naturschutz & Lebensräume", icon: "🍃", thema: "Streuobstwiese", farbe: "#91AE2D", bereiche: [{ titel: "Was siehst du hier?", text: "Eine Streuobstwiese besteht aus locker verteilten Obstbäumen, unter denen eine Wiese wächst. Apfel-, Birn- oder Pflaumenbäume bieten Nahrung und Lebensraum für viele Tiere." }, { titel: "Warum ist das wichtig?", text: "Streuobstwiesen gehören zu den artenreichsten Lebensräumen Mitteleuropas. Sie verbinden Obstbau mit Naturschutz." }, { titel: "Schon gewusst?", text: "Auf einer Streuobstwiese können mehrere tausend Tier- und Pflanzenarten vorkommen. Auf unserer Streuobstwiese stehen Apfelbäume der 'alten Sorten', diese können auch von Allergikern genossen werden." }, { titel: "Entdeckerfrage", text: "Welche Tiere oder Insekten kannst du zwischen den Bäumen entdecken?" }] },
+        "2": { kategorie: "Naturschutz & Lebensräume", icon: "🍃", thema: "Bienenkästen", farbe: "#91AE2D", bereiche: [{ titel: "Was siehst du hier?", text: "In diesen Kästen leben Honigbienen. Sie bauen im Inneren Waben aus Wachs und sammeln Nektar und Pollen von Blüten." }, { titel: "Warum ist das wichtig?", text: "Bienen sind wichtige Bestäuber. Viele Pflanzen – auch Obstbäume – könnten ohne sie keine Früchte bilden." }, { titel: "Schon gewusst?", text: "Ein Bienenvolk kann aus bis zu 50.000 Bienen bestehen." }, { titel: "Entdeckerfrage", text: "Beobachte die Fluglöcher: Wie viele Bienen fliegen gerade ein und aus?" }] },
+        "3": { kategorie: "Naturschutz & Lebensräume", icon: "🍃", thema: "Habitatbaum", farbe: "#91AE2D", bereiche: [{ titel: "Was siehst du hier?", text: "Dieser Baum wird bewusst im Wald stehen gelassen. Alte oder beschädigte Bäume bieten Höhlen, Risse und abgestorbene Äste – ideale Lebensräume für viele Tiere." }, { titel: "Warum ist das wichtig?", text: "Habitatbäume fördern die Artenvielfalt. Sie bieten Brutplätze für Vögel und Fledermäuse sowie Nahrung für viele Insekten." }, { titel: "Schon gewusst?", text: "Ein einzelner alter Baum kann Lebensraum für mehrere hundert Arten sein." }, { titel: "Entdeckerfrage", text: "Kannst du Höhlen oder lockere Rinde entdecken?" }] },
+        "4": { kategorie: "Naturschutz & Lebensräume", icon: "🍃", thema: "Insektenhotel", farbe: "#91AE2D", bereiche: [{ titel: "Was siehst du hier?", text: "Ein Insektenhotel bietet Wildbienen, Käfern und anderen Insekten einen geschützten Platz zum Nisten und Überwintern." }, { titel: "Warum ist das wichtig?", text: "Viele Insekten verlieren durch aufgeräumte Landschaften ihre natürlichen Lebensräume." }, { titel: "Schon gewusst?", text: "Über 560 Wildbienenarten leben in Deutschland – viele davon sind auf kleine Hohlräume angewiesen." }, { titel: "Entdeckerfrage", text: "Schau dir die Röhren genau an: Sind einige mit Lehm oder Pflanzenresten verschlossen?" }] },
+        "5": { kategorie: "Naturschutz & Lebensräume", icon: "🍃", thema: "Insektenhecke", farbe: "#91AE2D", bereiche: [{ titel: "Was siehst du hier?", text: "Eine Insektenhecke besteht aus verschiedenen Sträuchern und blühenden Pflanzen. Sie bietet Nahrung und Schutz für viele Insekten." }, { titel: "Warum ist das wichtig?", text: "Blüten liefern Nektar und Pollen. Gleichzeitig bieten dichte Zweige Verstecke für Tiere." }, { titel: "Schon gewusst?", text: "Viele Schmetterlinge und Wildbienen sind auf bestimmte Pflanzen angewiesen." }, { titel: "Entdeckerfrage", text: "Welche Blüten oder Insekten kannst du hier entdecken?" }] },
+        "6": { kategorie: "Arten", icon: "🐾", thema: "Buntspecht", farbe: "#C36015", bereiche: [{ titel: "Was siehst du hier?", text: "Der Buntspecht ist leicht an seinem schwarz-weißen Gefieder und dem roten Bereich am Bauch zu erkennen." }, { titel: "Warum ist das wichtig?", text: "Spechte bauen Höhlen in Bäume. Viele andere Tiere nutzen diese später als Wohnraum." }, { titel: "Schon gewusst?", text: "Ein Buntspecht kann bis zu 20 Mal pro Sekunde gegen einen Baum schlagen." }, { titel: "Entdeckerfrage", text: "Hörst du irgendwo ein Klopfen im Wald?" }] },
+        "7": { kategorie: "Arten", icon: "🐾", thema: "Waldameisen", farbe: "#C36015", bereiche: [{ titel: "Was siehst du hier?", text: "Waldameisen bauen große Hügel aus Nadeln und Zweigen. In solchen Nestern leben tausende Ameisen zusammen." }, { titel: "Warum ist das wichtig?", text: "Sie sind wichtige Helfer im Wald. Ameisen fressen viele andere Insekten und helfen so beim Gleichgewicht im Ökosystem." }, { titel: "Schon gewusst?", text: "Ein Ameisenstaat kann täglich tausende Insekten erbeuten." }, { titel: "Entdeckerfrage", text: "Beobachte den Ameisenweg: Wohin tragen die Ameisen ihre Nahrung?" }] },
+        "8": { kategorie: "Arten", icon: "🐾", thema: "Fledermaus", farbe: "#C36016", bereiche: [{ titel: "Was siehst du hier?", text: "Fledermäuse sind die einzigen Säugetiere, die aktiv fliegen können. Tagsüber schlafen sie oft in Baumhöhlen oder Kästen." }, { titel: "Warum ist das wichtig?", text: "Nachts jagen sie Insekten. Damit helfen sie, Insektenbestände natürlich zu regulieren." }, { titel: "Schon gewusst?", text: "Eine Fledermaus kann in einer Nacht mehrere tausend Insekten fressen." }, { titel: "Entdeckerfrage", text: "Warum sind Fledermäuse wohl hauptsächlich nachts unterwegs?" }] },
+        "9": { kategorie: "Arten", icon: "🐾", thema: "Bienen", farbe: "#C36017", bereiche: [{ titel: "Was siehst du hier?", text: "Bienen sammeln Nektar und Pollen von Blüten. Daraus stellen sie Honig her und versorgen ihr Volk." }, { titel: "Warum ist das wichtig?", text: "Beim Sammeln bestäuben sie viele Pflanzen. Ohne Bienen gäbe es deutlich weniger Früchte." }, { titel: "Schon gewusst?", text: "Ein Bienenvolk besucht an einem Tag Millionen von Blüten." }, { titel: "Entdeckerfrage", text: "Welche Blüten in deiner Umgebung könnten für Bienen interessant sein?" }] },
+        "10": { kategorie: "Baumarten", icon: "🌲", thema: "Kiefer", farbe: "#3E822C", bereiche: [{ titel: "Was siehst du hier?", text: "Die Kiefer erkennt man an ihren langen Nadeln und der rötlichen Rinde. Sie wächst oft auf sandigen Böden." }, { titel: "Warum ist das wichtig?", text: "Kiefern sind sehr anpassungsfähig. Ihr Holz wird oft als Bauholz oder für Möbel verwendet." }, { titel: "Schon gewusst?", text: "Kiefern können mehrere hundert Jahre alt werden." }, { titel: "Entdeckerfrage", text: "Wie viele Nadeln wachsen zusammen aus einem Bündel?" }] },
+        "11": { kategorie: "Baumarten", icon: "🌲", thema: "Eiche", farbe: "#3E822C", bereiche: [{ titel: "Was siehst du hier?", text: "Eichen haben tief gelappte Blätter und tragen im Herbst Eicheln." }, { titel: "Warum ist das wichtig?", text: "Eichen sind besonders wertvoll für die Artenvielfalt. Ihr Holz ist eines der beständigsten in Deutschland." }, { titel: "Schon gewusst?", text: "Über 1000 Tierarten leben an und in Eichen." }, { titel: "Entdeckerfrage", text: "Findest du ein Eichenblatt oder eine Eichel auf dem Boden?" }] },
+        "12": { kategorie: "Baumarten", icon: "🌲", thema: "Buche", farbe: "#3E822C", bereiche: [{ titel: "Was siehst du hier?", text: "Die Rotbuche hat eine glatte graue Rinde und ovale Blätter. Sie ist der häufigste Laubbaum unserer Wälder." }, { titel: "Warum ist das wichtig?", text: "Buchen bilden dichte Kronen und prägen ganze Waldlandschaften." }, { titel: "Schon gewusst?", text: "Buchen können über 300 Jahre alt werden." }, { titel: "Entdeckerfrage", text: "Kannst du die glatte Rinde einer Buche erkennen?" }] },
+        "13": { kategorie: "Baumarten", icon: "🌲", thema: "Lärche", farbe: "#3E822C", bereiche: [{ titel: "Was siehst du hier?", text: "Die Lärche ist ein besonderer Nadelbaum, denn sie ist der einzige Nadelbaum in Deutschland, der seine Nadeln abwirft." }, { titel: "Warum ist das wichtig?", text: "Das Holz der Lärche ist besonders widerstandsfähig und wird gerne im Bau verwendet." }, { titel: "Schon gewusst?", text: "Im Herbst färben sich die Nadeln der Lärche goldgelb." }, { titel: "Entdeckerfrage", text: "Kannst du die weichen Nadelbüschel der Lärche erkennen?" }] },
+        "14": { kategorie: "Baumarten", icon: "🌲", thema: "Birke", farbe: "#3E822C", bereiche: [{ titel: "Was siehst du hier?", text: "Birken erkennt man leicht an ihrer weißen Rinde und den kleinen dreieckigen Blättern." }, { titel: "Warum ist das wichtig?", text: "Sie sind typische Pionierbäume und wachsen schnell auf freien Flächen." }, { titel: "Schon gewusst?", text: "Birken verbreiten ihre Samen durch den Wind." }, { titel: "Entdeckerfrage", text: "Kannst du die auffällige weiße Rinde entdecken?" }] },
+        "15": { kategorie: "Waldökologie", icon: "🌱", thema: "Totholz", farbe: "#87B4C3", bereiche: [{ titel: "Was siehst du hier?", text: "Abgestorbene Bäume oder umgestürzte Stämme bleiben oft bewusst liegen. Man nennt das Totholz." }, { titel: "Warum ist das wichtig?", text: "Totholz ist ein wichtiger Lebensraum für Pilze, Käfer, Moose und viele andere Organismen." }, { titel: "Schon gewusst?", text: "Ein großer Teil der Waldarten ist direkt oder indirekt auf Totholz angewiesen." }, { titel: "Entdeckerfrage", text: "Kannst du Pilze oder kleine Löcher im Holz entdecken?" }] },
+        "16": { kategorie: "Waldökologie", icon: "🌱", thema: "Pilze im Wald", farbe: "#87B4C4", bereiche: [{ titel: "Was siehst du hier?", text: "Pilze wachsen oft auf dem Waldboden oder auf Holz. Der sichtbare Pilz ist nur der Fruchtkörper." }, { titel: "Warum ist das wichtig?", text: "Unter der Erde befindet sich ein Netzwerk aus Pilzfäden, das wichtige Aufgaben im Wald erfüllt." }, { titel: "Schon gewusst?", text: "Pilze helfen beim Abbau von abgestorbenem Holz." }, { titel: "Entdeckerfrage", text: "Kannst du verschiedene Pilze entdecken?" }] },
+        "17": { kategorie: "Waldökologie", icon: "🌱", thema: "Waldboden", farbe: "#87B4C5", bereiche: [{ titel: "Was siehst du hier?", text: "Der Waldboden besteht aus Blättern, Nadeln, Humus und Erde." }, { titel: "Warum ist das wichtig?", text: "In ihm leben unzählige kleine Tiere und Mikroorganismen, die abgestorbene Pflanzen zersetzen." }, { titel: "Schon gewusst?", text: "Ein Teelöffel Waldboden kann Milliarden Mikroorganismen enthalten." }, { titel: "Entdeckerfrage", text: "Schau dir den Boden genau an – welche Tiere oder Pflanzenreste erkennst du?" }] },
+        "18": { kategorie: "Waldökologie", icon: "🌱", thema: "Wasser im Wald", farbe: "#87B4C6", bereiche: [{ titel: "Was siehst du hier?", text: "Wälder speichern Wasser im Boden und geben es langsam wieder ab." }, { titel: "Warum ist das wichtig?", text: "So helfen sie, Überschwemmungen zu verhindern und Grundwasser zu bilden." }, { titel: "Schon gewusst?", text: "Bäume verdunsten über ihre Blätter große Mengen Wasser." }, { titel: "Entdeckerfrage", text: "Warum ist Wasser für Bäume so wichtig?" }] },
+        "19": { kategorie: "Forstwirtschaft", icon: "🚜", thema: "Naturverjüngung", farbe: "#78482B", bereiche: [{ titel: "Was siehst du hier?", text: "Hier wachsen junge Bäume aus Samen der alten Bäume nach." }, { titel: "Warum ist das wichtig?", text: "Naturverjüngung ist eine natürliche und nachhaltige Form der Waldverjüngung." }, { titel: "Schon gewusst?", text: "Ein Baum kann im Laufe seines Lebens Millionen Samen produzieren." }, { titel: "Entdeckerfrage", text: "Wie viele junge Bäume kannst du entdecken?" }] },
+        "20": { kategorie: "Forstwirtschaft", icon: "🚜", thema: "Pflanzung", farbe: "#78482B", bereiche: [{ titel: "Was siehst du hier?", text: "Manchmal werden junge Bäume von Menschen gepflanzt." }, { titel: "Warum ist das wichtig?", text: "Das hilft, den Wald nach Stürmen, Trockenheit oder Holznutzung zu erneuern." }, { titel: "Schon gewusst?", text: "Dabei werden oft viele verschiedene Baumarten gepflanzt." }, { titel: "Entdeckerfrage", text: "Kannst du Reihen junger Bäume erkennen?" }] },
+        "21": { kategorie: "Forstwirtschaft", icon: "🚜", thema: "Ernte", farbe: "#78482B", bereiche: [{ titel: "Was siehst du hier?", text: "Bei der Holzernte werden ausgewählte Bäume gefällt und genutzt." }, { titel: "Warum ist das wichtig?", text: "Holz ist ein nachhaltiger Rohstoff, der viele Materialien ersetzen kann." }, { titel: "Schon gewusst?", text: "Bäume werden oft gezielt entnommen, damit andere besser wachsen können." }, { titel: "Entdeckerfrage", text: "Siehst du Spuren von Holzernte im Wald?" }] },
+        "22": { kategorie: "Forstwirtschaft", icon: "🚜", thema: "Kalamität", farbe: "#78482B", bereiche: [{ titel: "Was siehst du hier?", text: "Kalamitäten sind Schäden im Wald durch Sturm, Trockenheit oder Schädlinge." }, { titel: "Warum ist das wichtig?", text: "Solche Ereignisse können große Waldflächen zum Absterben bringen." }, { titel: "Schon gewusst?", text: "Nach einer Kalamität beginnt oft ein neuer Wald zu wachsen." }, { titel: "Entdeckerfrage", text: "Welche Veränderungen im Wald kannst du hier erkennen?" }] },
+        "23": { kategorie: "Forstwirtschaft", icon: "🚜", thema: "Holz als Rohstoff", farbe: "#78482B", bereiche: [{ titel: "Was siehst du hier?", text: "Holz ist ein vielseitiger Rohstoff. Es wird für Möbel, Häuser, Papier oder Energie genutzt." }, { titel: "Warum ist das wichtig?", text: "Im Gegensatz zu vielen anderen Materialien wächst Holz nach." }, { titel: "Schon gewusst?", text: "Holz speichert während seines Wachstums CO₂ aus der Atmosphäre." }, { titel: "Entdeckerfrage", text: "Welche Dinge aus Holz kennst du aus deinem Alltag?" }] }
+    };
+
+    function renderStation() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const stationID = urlParams.get('id') || "1";
+
+        const s = stationsKatalog[stationID];
+
+        if (s) {
+            const farbe = s.farbe || "#154734";
+
+            // Header Farbe setzen
+            document.getElementById('category-header').style.backgroundColor = farbe;
+            
+            // Icon und Text setzen
+            document.getElementById('kat-icon').textContent = s.icon;
+            document.getElementById('kat-text').textContent = s.kategorie;
+            document.getElementById('thema-label').textContent = s.thema;
+            document.getElementById('station-number').textContent = "Station " + (stationID.padStart(2, '0'));
+
+            // Karten generieren
+            const container = document.getElementById('cards-container');
+            container.innerHTML = "";
+
+            s.bereiche.forEach((bereich, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const stepNum = document.createElement('div');
+                stepNum.className = 'step-num';
+                stepNum.style.backgroundColor = farbe;
+                stepNum.textContent = index + 1;
+                
+                const title = document.createElement('h2');
+                title.appendChild(stepNum);
+                title.appendChild(document.createTextNode(bereich.titel));
+                
+                const text = document.createElement('p');
+                text.textContent = bereich.text;
+                
+                card.appendChild(title);
+                card.appendChild(text);
+                container.appendChild(card);
+            });
         } else {
-            for (let j = 5; j < row.length - 1; j += 2) {
-                const titel = row[j];
-                const text = row[j + 1];
-                if (titel && String(titel).trim() && String(titel).trim() !== "?") {
-                    bereiche.push({ titel: String(titel).trim(), text: text ? String(text).trim() : "" });
-                }
-            }
+            document.getElementById('thema-label').textContent = "Station nicht gefunden";
         }
-        result[id] = { kategorie: kategorie, icon: icon, thema: thema, farbe: farbe, bereiche: bereiche, schluessel: schluesselDaten };
     }
-    return result;
-}
 
-function parseCSVLine(line) {
-    const result = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = line[i + 1];
-        if (char === '"') {
-            if (inQuotes && nextChar === '"') { current += '"'; i++; }
-            else { inQuotes = !inQuotes; }
-        } else if (char === "," && !inQuotes) {
-            result.push(current.trim());
-            current = "";
-        } else { current += char; }
-    }
-    result.push(current.trim());
-    return result;
-}
-
-function renderBestimmungsschluessel(container, schluesselDaten, farbe) {
-    const intro = document.createElement("div");
-    intro.className = "schluessel-intro";
-    intro.innerHTML = `<strong>So funktioniert der Bestimmungsschlüssel:</strong><br><br>Am Anfang steht das genaue Betrachten des zu bestimmenden Baumes. Achtet dabei auf das Aussehen der Blätter, deren Anordnung, die Früchte, Farben und Geruch u.v.m.<br><br>Dann beginnt Ihr bei <strong>Var. 1a</strong> und <strong>1b</strong>. Lest euch die beschriebenen Merkmale durch, entscheidet euch für eins und folgt dann dem rechts stehenden Pfad "weiter zu Var", wo Ihr das Ganze wiederholt, bis Ihr zuletzt an einem <strong>Baumnamen</strong> angelangt.<br><br>Falls das nicht der Fall sein sollte, findet Ihr zu Beginn jeder Var. in Klammern die Angabe, von welcher Var. aus Ihr dorthin gelangt seid, z.B. <em>10a (6b)</em> bedeutet, dass man von Var. 6b weiter zu 10 gewiesen wurde.`;
-    container.appendChild(intro);
-    const table = document.createElement("table");
-    table.className = "schluessel-table";
-    table.innerHTML = `<thead><tr><th>Var.</th><th>Zu betrachtende Merkmale</th><th>Weiter zu Var.</th></tr></thead>`;
-    const tbody = document.createElement("tbody");
-    schluesselDaten.forEach(item => {
-        const isBaum = !/^\d/.test(item.weiter);
-        const weiterContent = isBaum ? `<span class="baum-name">${item.weiter}</span>` : `<span class="weiter-link">Var. ${item.weiter}</span>`;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td class="var-cell">${item.var}</td><td class="merkmale-cell">${item.merkmale}</td><td class="weiter-cell">${weiterContent}</td>`;
-        tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    container.appendChild(table);
-}
-
-function renderNormaleStation(s, container, farbe) {
-    s.bereiche.forEach((bereich, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        const stepNum = document.createElement("div");
-        stepNum.className = "step-num";
-        stepNum.style.backgroundColor = farbe;
-        stepNum.textContent = index + 1;
-        const title = document.createElement("h2");
-        title.appendChild(stepNum);
-        title.appendChild(document.createTextNode(bereich.titel));
-        const text = document.createElement("p");
-        text.textContent = bereich.text;
-        card.appendChild(title);
-        card.appendChild(text);
-        container.appendChild(card);
-    });
-}
-
-function renderStation(stationsKatalog) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const stationID = urlParams.get("id") || "1";
-    const s = stationsKatalog[stationID];
-    if (s) {
-        const farbe = s.farbe || "#154734";
-        document.getElementById("category-header").style.backgroundColor = farbe;
-        document.getElementById("kat-icon").textContent = s.icon;
-        document.getElementById("kat-text").textContent = s.kategorie;
-        document.getElementById("thema-label").textContent = s.thema;
-        document.getElementById("station-number").textContent = "Station " + stationID.padStart(2, "0");
-        const container = document.getElementById("cards-container");
-        container.innerHTML = "";
-        if (s.schluessel) {
-            renderBestimmungsschluessel(container, s.schluessel, farbe);
-        } else if (s.bereiche.length === 0) {
-            container.innerHTML = '<div class="empty-state">Für diese Station sind noch keine Inhalte vorhanden.</div>';
-        } else {
-            renderNormaleStation(s, container, farbe);
-        }
-    } else {
-        document.getElementById("thema-label").textContent = "Station nicht gefunden";
-        document.getElementById("cards-container").innerHTML = '<div class="error">Station "' + stationID + '" wurde nicht gefunden.</div>';
-    }
-}
-
-async function loadData() {
-    try {
-        const response = await fetch("daten_rundweg_lanz.csv");
-        if (!response.ok) { throw new Error("CSV-Datei konnte nicht geladen werden (Status: " + response.status + ")"); }
-        const csvText = await response.text();
-        const stationsKatalog = parseCSV(csvText);
-        if (Object.keys(stationsKatalog).length === 0) { throw new Error("CSV-Datei enthält keine gültigen Daten"); }
-        renderStation(stationsKatalog);
-    } catch (error) {
-        console.error("Fehler beim Laden der Daten:", error);
-        document.getElementById("thema-label").textContent = "Fehler";
-        document.getElementById("cards-container").innerHTML = '<div class="error">' + error.message + '<br><br>Stelle sicher, dass die Datei "daten_rundweg_lanz.csv" im gleichen Ordner liegt.</div>';
-    }
-}
-
-window.addEventListener("load", loadData);
+    // Beim Laden der Seite ausführen
+    window.addEventListener('load', renderStation);
 </script>
+
 </body>
 </html>
