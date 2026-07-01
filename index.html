@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wald-Entdecker</title>
+    <title>Rundweg Lanz – Wald-Entdecker</title>
     <style>
         :root {
             --forstgruen: #154734;      
             --weiss: #ffffff;
             --schwarz: #2d2a26;
-            --grau: #f4f4f4;
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: #11382a;
+            background-color: var(--forstgruen);
             color: var(--schwarz);
             margin: 0;
             padding: 0;
@@ -36,152 +32,160 @@
             z-index: 100;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
             transition: background-color 0.4s ease;
-            background-color: var(--forstgruen);
         }
 
         .header-content {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            color: var(--weiss);
         }
 
-        .header-left {
+        #kat-label {
+            color: white;
+            margin: 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .icon-circle {
-            background-color: rgba(255,255,255,0.2);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
+        .kat-icon {
+            font-size: 1.2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            min-width: 32px;
+            height: 32px;
         }
 
-        .header-titles h1 {
-            margin: 0;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.9;
-        }
-
-        .header-titles p {
-            margin: 2px 0 0 0;
-            font-size: 20px;
+        #station-number {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
             font-weight: bold;
         }
 
-        .station-badge {
-            background-color: rgba(0,0,0,0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        main {
-            flex: 1;
-            max-width: 600px;
+        .container {
             width: 100%;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 25px 20px;
+            padding: 25px 15px;
         }
 
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .intro {
+            text-align: center;
+            color: var(--weiss);
+            margin-bottom: 30px;
         }
+
+        h1 { margin:0; font-size: 2.2rem; color: var(--weiss); }
 
         .card {
-            background-color: var(--weiss);
-            border-radius: 14px;
+            background: var(--weiss);
+            border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .card h2 {
-            margin-top: 0;
-            margin-bottom: 12px;
-            font-size: 20px;
-            color: #1a1a1a;
+        h2 {
+            color: var(--forstgruen);
+            font-size: 1.1rem;
+            margin: 0 0 10px 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            text-transform: uppercase;
         }
 
         .step-num {
+            color: var(--weiss);
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            color: var(--weiss);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            margin-right: 12px;
+            font-size: 0.9rem;
             font-weight: bold;
+            flex-shrink: 0;
+            transition: background-color 0.4s ease;
+        }
+
+        p { line-height: 1.6; font-size: 1.05rem; margin: 0; color: #333; }
+
+        /* Spezial-Styles für Bestimmungsschlüssel */
+        .key-entry {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .key-entry:last-child { border-bottom: none; }
+        .key-var {
+            font-weight: bold;
+            color: var(--forstgruen);
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+        .key-merkmale { flex: 1; }
+        .key-weiter {
+            font-weight: bold;
+            color: #C36015;
+            min-width: 80px;
+            text-align: right;
             flex-shrink: 0;
         }
 
-        .card p {
-            margin: 0;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #4a4a4a;
-            white-space: pre-line;
-        }
-
         .error-msg {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            color: #c0392b;
             text-align: center;
-            font-weight: bold;
         }
 
         footer {
             text-align: center;
-            padding: 15px 20px;
+            padding:0 20px 5px 20px;
             margin-top: auto;
         }
 
         footer p {
             font-size: 0.75rem;
             color: rgba(255,255,255,0.6);
-            margin: 0;
         }
     </style>
+<base target="_blank">
 </head>
 <body>
 
 <header id="category-header">
     <div class="header-content">
-        <div class="header-left">
-            <div class="icon-circle" id="kat-icon">🌲</div>
-            <div class="header-titles">
-                <h1 id="kat-text">Wald-Entdecker</h1>
-                <p id="thema-label">Lade Station...</p>
-            </div>
-        </div>
-        <div class="station-badge" id="station-number">Station --</div>
+        <h1 id="kat-label">
+            <span class="kat-icon" id="kat-icon">🐿️</span>
+            <span id="kat-text">Rundweg Lanz</span>
+        </h1>
+        <span id="station-number">Station --</span>
     </div>
 </header>
 
-<main>
-    <div class="cards-container" id="cards-container">
-        <!-- Dynamischer Inhalt aus der CSV wird hier injiziert -->
+<div class="container">
+    <div class="intro">
+        <h1 id="thema-label">Lade...</h1>
     </div>
-</main>
+
+    <div id="cards-container">
+    </div>
+</div>
 
 <footer>
     <p>&copy; 2026 Landesforstanstalt Mecklenburg-Vorpommern</p>
@@ -205,7 +209,7 @@
         return r;
     }
 
-    // Wandelt den CSV-Rohtext in das stationsKatalog-Objekt um
+    // Wandelt den CSV-Rohtext in ein strukturiertes Objekt um
     function csvToKatalog(csvText) {
         const lines = csvText.replace(/\r\n/g, '\n').split('\n');
         if (lines.length < 2) return {};
@@ -215,7 +219,7 @@
 
         for (let i = 1; i < lines.length; i++) {
             if (!lines[i].trim()) continue;
-            
+
             const values = parseCSVLine(lines[i]);
             const row = {};
             headers.forEach((h, idx) => { row[h] = values[idx] || ""; });
@@ -226,51 +230,33 @@
 
             if (!stationID) continue;
 
-            // ANPASSUNG AN DIE VERSCHOBENEN SPALTEN DEINER CSV:
-            // In Spalte 'Icon' steht die echte Farbe (z.B. #91ae2d)
-            // In Spalte 'Kategorie' steht das echte Icon (z.B. 🐿️)
-            // In Spalte 'Thema' steht die echte Kategorie/Thema (z.B. Bestimmungsschlüssel)
-            let finaleFarbe = row["Icon"] && row["Icon"].startsWith('#') ? row["Icon"] : "#154734";
-            let finalesIcon = row["Kategorie"] && !row["Kategorie"].startsWith('#') ? row["Kategorie"] : "🐿️";
-            let finalesThema = row["Thema"] || "Information";
+            // KORREKTUR: Falls die Spalten in der CSV vertauscht sind und im Icon ein Farbcode steht
+            let finaleFarbe = row["Farbe"] && row["Farbe"] !== "?" ? row["Farbe"] : "#154734";
+            let finalesIcon = row["Icon"] || "🐿️";
+
+            if (finalesIcon.startsWith('#')) {
+                finaleFarbe = finalesIcon; // Nimm den Farbcode aus der Icon-Spalte
+                finalesIcon = "🐿️";        // Setze ein Standard-Icon, da keins da ist
+            }
 
             const bereiche = [];
-            // Iteriert durch die Spalten-Paare Titel_1/Text_1 bis Titel_9/Text_9
             for (let j = 1; j <= 9; j++) {
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
-                
-                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN" && row[tKey] !== "undefined" && row[txtKey] !== "undefined") {
-                    let titleValue = (row[tKey] || "").toString().trim();
-                    let textValue = (row[txtKey] || "").toString().trim();
 
-                    // HEURISTIK: Wenn die Spalten vertauscht sein könnten, tauschen.
-                    // Kriterien (konservativ):
-                    // - Wenn der Titel wie langer Fließtext aussieht (sehr lang, Satzzeichen oder Zeilenumbrüche)
-                    //   und der Text dagegen kurz ist, dann tauschen.
-                    const titleLooksLikeLongText = titleValue.length > 80 || /[.!?]\s/.test(titleValue) || titleValue.includes('\n');
-                    const textLooksShort = textValue.length < 80 && !textValue.includes('\n');
+                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
+                    let textValue = row[txtKey];
 
-                    if (titleLooksLikeLongText && textLooksShort) {
-                        // Tausche
-                        const tmp = titleValue;
-                        titleValue = textValue;
-                        textValue = tmp;
-                        console.info(`Tausch Titel/Text bei Station ${stationID}, Felder ${tKey}/${txtKey}`);
-                    }
-
-                    // Erkennung und saubere Formatierung von JSON-Bestimmungsschlüsseln
                     if (textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
-                            
+
                             jsonArray.forEach(item => {
                                 bereiche.push({
-                                    // Setzt die Variante (z.B. "Auswahl 1a") als Überschrift
-                                    titel: item.var ? `Auswahl ${item.var}` : titleValue,
-                                    // Schreibt den langen Merkmalstext sauber in den Fließtext
-                                    text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`
+                                    titel: item.var ? `Auswahl ${item.var}` : row[tKey],
+                                    text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`,
+                                    isKey: true
                                 });
                             });
                             continue; 
@@ -279,18 +265,18 @@
                         }
                     }
 
-                    // Standard-Inhaltsblöcke (z.B. Forstliche Begriffe)
                     bereiche.push({
-                        titel: titleValue,
-                        text: textValue
+                        titel: row[tKey],
+                        text: textValue,
+                        isKey: false
                     });
                 }
             }
 
             katalog[stationID] = {
-                kategorie: "Rundweg",
+                kategorie: row["Kategorie"] || "Rundweg",
                 icon: finalesIcon,
-                thema: finalesThema,
+                thema: row["Thema"] || "Information",
                 farbe: finaleFarbe,
                 bereiche: bereiche
             };
@@ -300,12 +286,12 @@
 
     async function renderStation() {
         const urlParams = new URLSearchParams(window.location.search);
-        const stationID = urlParams.get('id') || "2"; 
+        const stationID = urlParams.get('id') || "1"; 
 
         try {
             const response = await fetch('daten_rundweg_lanz.csv');
             if (!response.ok) throw new Error("Die Datei 'daten_rundweg_lanz.csv' konnte nicht geladen werden.");
-            
+
             const csvText = await response.text();
             const stationsKatalog = csvToKatalog(csvText);
             const s = stationsKatalog[stationID];
@@ -313,7 +299,7 @@
             if (s) {
                 const farbe = s.farbe;
 
-                // Dynamisches Styling über die ausgelesene Farbe steuern
+                // Setzt die korrekte Hintergrundfarbe für den Header
                 document.getElementById('category-header').style.backgroundColor = farbe;
                 document.getElementById('kat-icon').textContent = s.icon;
                 document.getElementById('kat-text').textContent = s.kategorie;
@@ -326,19 +312,29 @@
                 s.bereiche.forEach((bereich, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    
+
                     const stepNum = document.createElement('div');
                     stepNum.className = 'step-num';
-                    stepNum.style.backgroundColor = farbe; // Färbt die Kachelnummerierung passend ein
+                    stepNum.style.backgroundColor = farbe;
                     stepNum.textContent = index + 1;
-                    
+
                     const title = document.createElement('h2');
                     title.appendChild(stepNum);
                     title.appendChild(document.createTextNode(bereich.titel));
-                    
+
                     const text = document.createElement('p');
-                    text.textContent = bereich.text;
-                    
+
+                    // Bestimmungsschlüssel: spezielle Darstellung
+                    if (bereich.isKey) {
+                        const parts = bereich.text.split('\n\n➜ Weiter zu: ');
+                        text.innerHTML = `<div class="key-entry">
+                            <span class="key-merkmale">${parts[0]}</span>
+                            <span class="key-weiter">${parts[1] || ''}</span>
+                        </div>`;
+                    } else {
+                        text.textContent = bereich.text;
+                    }
+
                     card.appendChild(title);
                     card.appendChild(text);
                     container.appendChild(card);
