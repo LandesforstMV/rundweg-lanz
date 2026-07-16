@@ -209,7 +209,7 @@
     }
 
     function csvToKatalog(csvText) {
-        const lines = csvText.replace(/\r\n/g, '\n').split('\n');
+        const lines = csvText.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').split('\n');
         if (lines.length < 2) return {};
 
         const headers = parseCSVLine(lines[0]);
@@ -242,8 +242,8 @@
 
             const bereiche = [];
             for (let j = 1; j <= 9; j++) {
-                const tKey = `Titel_${j}`;
-                const txtKey = `Text_${j}`;
+                const tKey = `Titel ${j}`;
+                const txtKey = `Text ${j}`;
                 
                 if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
                     let textValue = row[txtKey];
