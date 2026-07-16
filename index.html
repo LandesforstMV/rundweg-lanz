@@ -246,9 +246,9 @@
                 const txtKey = `Text ${j}`;
                 
                 if (row[tKey] && row[tKey] !== "NaN") {
-                    let textValue = row[txtKey];
+                    let textValue = row[txtKey] || "";
 
-                    if (textValue.trim().startsWith('[')) {
+                    if (textValue && textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
