@@ -201,7 +201,7 @@
                 if (q && text[i+1] === '"') { p += '"'; i++; }
                 else { q = !q; }
             }
-            else if (c === ',' && !q) { r.push(p.trim()); p = ''; }
+            else if (c === ';' && !q) { r.push(p.trim()); p = ''; }
             else { p += c; }
         }
         r.push(p.trim());
@@ -209,16 +209,56 @@
     }
 
     function csvToKatalog(csvText) {
-        const lines = csvText.replace(/\r\n/g, '\n').split('\n');
-        if (lines.length < 2) return {};
+        csvText = csvText.replace(/^\uFEFF/, '');
 
-        const headers = parseCSVLine(lines[0]);
+        // CSV mit Zeilenumbrüchen in Anführungszeichen korrekt parsen
+        const rows = [];
+        let currentRow = [];
+        let currentField = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < csvText.length; i++) {
+            const c = csvText[i];
+            const next = csvText[i + 1];
+
+            if (c === '"') {
+                if (inQuotes && next === '"') {
+                    currentField += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c === ';' && !inQuotes) {
+                currentRow.push(currentField.trim());
+                currentField = '';
+            } else if (c === '\n' && !inQuotes) {
+                currentRow.push(currentField.trim());
+                if (currentRow.length > 0 && !(currentRow.length === 1 && currentRow[0] === '')) {
+                    rows.push(currentRow);
+                }
+                currentRow = [];
+                currentField = '';
+            } else if (c === '\r' && !inQuotes) {
+                // \r überspringen (wird mit \n behandelt)
+            } else {
+                currentField += c;
+            }
+        }
+
+        if (currentField !== '' || currentRow.length > 0) {
+            currentRow.push(currentField.trim());
+            rows.push(currentRow);
+        }
+
+        if (rows.length < 2) return {};
+
+        const headers = rows[0];
         const katalog = {};
 
-        for (let i = 1; i < lines.length; i++) {
-            if (!lines[i].trim()) continue;
-            
-            const values = parseCSVLine(lines[i]);
+        for (let i = 1; i < rows.length; i++) {
+            const values = rows[i];
+            if (values.length === 0 || (values.length === 1 && values[0] === '')) continue;
+
             const row = {};
             headers.forEach((h, idx) => { row[h] = values[idx] || ""; });
 
@@ -242,17 +282,17 @@
 
             const bereiche = [];
             for (let j = 1; j <= 9; j++) {
-                const tKey = `Titel_${j}`;
-                const txtKey = `Text_${j}`;
-                
-                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
-                    let textValue = row[txtKey];
+                const tKey = `Titel ${j}`;
+                const txtKey = `Text ${j}`;
 
-                    if (textValue.trim().startsWith('[')) {
+                if (row[tKey] && row[tKey] !== "NaN") {
+                    let textValue = row[txtKey] || "";
+
+                    if (textValue && textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
-                            
+
                             jsonArray.forEach(item => {
                                 bereiche.push({
                                     titel: item.var ? `Auswahl ${item.var}` : row[tKey],
