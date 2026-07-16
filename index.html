@@ -201,7 +201,7 @@
                 if (q && text[i+1] === '"') { p += '"'; i++; }
                 else { q = !q; }
             }
-            else if (c === ';' && !q) { r.push(p.trim()); p = ''; }
+            else if (c === ',' && !q) { r.push(p.trim()); p = ''; }
             else { p += c; }
         }
         r.push(p.trim());
@@ -209,7 +209,7 @@
     }
 
     function csvToKatalog(csvText) {
-        const lines = csvText.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').split('\n');
+        const lines = csvText.replace(/\r\n/g, '\n').split('\n');
         if (lines.length < 2) return {};
 
         const headers = parseCSVLine(lines[0]);
@@ -242,13 +242,13 @@
 
             const bereiche = [];
             for (let j = 1; j <= 9; j++) {
-                const tKey = `Titel ${j}`;
-                const txtKey = `Text ${j}`;
+                const tKey = `Titel_${j}`;
+                const txtKey = `Text_${j}`;
                 
-                if (row[tKey] && row[tKey] !== "NaN") {
-                    let textValue = row[txtKey] || "";
+                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
+                    let textValue = row[txtKey];
 
-                    if (textValue && textValue.trim().startsWith('[')) {
+                    if (textValue.trim().startsWith('[')) {
                         try {
                             const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
