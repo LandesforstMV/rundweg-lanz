@@ -331,7 +331,7 @@
                             <span class="key-weiter">${parts[1] || ''}</span>
                         </div>`;
                     } else {
-                        text.textContent = bereich.text;
+                        text.innerHTML = bereich.text.replace(/\n/g, '<br>');
                     }
                     
                     card.appendChild(title);
