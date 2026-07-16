@@ -178,7 +178,7 @@
 
 <div class="container">
     <div class="intro">
-        <h1 id="thema-label">Rundweg Lanz</h1>
+        <h1 id="thema-label">Lade...</h1>
     </div>
 
     <div id="cards-container">
@@ -201,7 +201,7 @@
                 if (q && text[i+1] === '"') { p += '"'; i++; }
                 else { q = !q; }
             }
-            else if (c === ',' && !q) { r.push(p.trim()); p = ''; }
+            else if (c === ';' && !q) { r.push(p.trim()); p = ''; }
             else { p += c; }
         }
         r.push(p.trim());
@@ -245,19 +245,17 @@
                 const tKey = `Titel_${j}`;
                 const txtKey = `Text_${j}`;
                 
-                let h2Text = row[txtKey];  // Frage/Aufforderung → h2
-                let pText = row[tKey];     // Erklärung → p
-                
-                if (h2Text && pText && h2Text !== "NaN" && pText !== "NaN") {
-                    
-                    if (pText.trim().startsWith('[')) {
+                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
+                    let textValue = row[txtKey];
+
+                    if (textValue.trim().startsWith('[')) {
                         try {
-                            const cleanJson = pText.replace(/""/g, '"');
+                            const cleanJson = textValue.replace(/""/g, '"');
                             const jsonArray = JSON.parse(cleanJson);
                             
                             jsonArray.forEach(item => {
                                 bereiche.push({
-                                    titel: item.var ? `Auswahl ${item.var}` : h2Text,
+                                    titel: item.var ? `Auswahl ${item.var}` : row[tKey],
                                     text: `${item.merkmale}\n\n➜ Weiter zu: ${item.weiter}`,
                                     isKey: true
                                 });
@@ -269,8 +267,8 @@
                     }
 
                     bereiche.push({
-                        titel: h2Text,
-                        text: pText,
+                        titel: row[tKey],
+                        text: textValue,
                         isKey: false
                     });
                 }
@@ -305,7 +303,6 @@
                 document.getElementById('category-header').style.backgroundColor = farbe;
                 document.getElementById('kat-icon').textContent = s.icon;
                 document.getElementById('kat-text').textContent = s.kategorie;
-                // Thema in h1 anzeigen
                 document.getElementById('thema-label').textContent = s.thema;
                 document.getElementById('station-number').textContent = "Station " + stationID.padStart(2, '0');
 
