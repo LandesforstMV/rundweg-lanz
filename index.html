@@ -245,7 +245,7 @@
                 const tKey = `Titel ${j}`;
                 const txtKey = `Text ${j}`;
                 
-                if (row[tKey] && row[txtKey] && row[tKey] !== "NaN" && row[txtKey] !== "NaN") {
+                if (row[tKey] && row[tKey] !== "NaN") {
                     let textValue = row[txtKey];
 
                     if (textValue.trim().startsWith('[')) {
